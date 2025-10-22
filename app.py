@@ -483,9 +483,14 @@ if __name__ == '__main__':
             sys.exit(1)
     
     # Configuración para Railway
-    port = int(os.environ.get('PORT', 5000))
-    host = '0.0.0.0' if os.environ.get('RAILWAY_ENVIRONMENT') else '127.0.0.1'
-    debug = not os.environ.get('RAILWAY_ENVIRONMENT')
+    port = int(os.environ.get('PORT', 8080))  # Railway usa puerto 8080 por defecto
+    host = '0.0.0.0'  # Siempre escuchar en todas las interfaces
+    debug = False  # Siempre modo producción en Railway
+    
+    print(f"🌐 Configuración del servidor:")
+    print(f"   Host: {host}")
+    print(f"   Puerto: {port}")
+    print(f"   Debug: {debug}")
     
     # Levantar servidor
     print("🚀 Robot de Ventas Hotmart - Backend Flask")
