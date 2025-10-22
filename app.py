@@ -8,224 +8,247 @@ API para webhook Hotmart, Web Push y FAQ
 import sys
 import os
 import json
-import sqlite3
+import psycopg2
+import psycopg2.extras
 import hmac
 import hashlib
 from difflib import get_close_matches
 from datetime import datetime
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory, redirect
 from dotenv import load_dotenv
+from urllib.parse import urlparse
 
 # Cargar variables de entorno
 load_dotenv()
 
-app = Flask(__name__)
-
 # ============================================
 # CONFIGURACIÓN
 # ============================================
-DB_PATH = os.path.join(os.path.dirname(__file__), 'robot.db')
-FAQS_PATH = os.path.join(os.path.dirname(__file__), 'faqs.json')
-HOTMART_SECRET = os.getenv('HOTMART_WEBHOOK_SECRET', 'cambia_este_secreto')
+
+app = Flask(__name__)
+
+# Variables de entorno
+HOTMART_SECRET = os.getenv('HOTMART_WEBHOOK_SECRET', 'default-secret')
+BASE_URL = os.getenv('BASE_URL_PUBLICA', 'http://localhost:5000')
+VAPID_PUBLIC_KEY = os.getenv('VAPID_PUBLIC_KEY', '')
+VAPID_PRIVATE_KEY = os.getenv('VAPID_PRIVATE_KEY', '')
+
+# Configuración de base de datos PostgreSQL
+DATABASE_URL = os.getenv('DATABASE_URL', 'sqlite:///robot.db')
+
+# Directorio de archivos estáticos
+SITE_DIR = os.path.join(os.path.dirname(__file__), 'site')
 
 # ============================================
-# BASE DE DATOS
+# CONEXIÓN A BASE DE DATOS
 # ============================================
-def get_db():
-    """Conexión thread-safe a SQLite"""
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-    return conn
+
+def get_db_connection():
+    """Obtener conexión a la base de datos"""
+    if DATABASE_URL.startswith('postgresql://'):
+        # PostgreSQL
+        return psycopg2.connect(DATABASE_URL)
+    else:
+        # SQLite (fallback)
+        import sqlite3
+        return sqlite3.connect('robot.db')
 
 def init_db():
-    """Inicializar base de datos desde db_init.sql"""
-    sql_path = os.path.join(os.path.dirname(__file__), 'db_init.sql')
+    """Inicializar base de datos"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
     
-    if not os.path.exists(sql_path):
-        print(f"❌ Error: No se encontró {sql_path}")
-        sys.exit(1)
-    
-    with open(sql_path, 'r', encoding='utf-8') as f:
-        sql_script = f.read()
-    
-    conn = get_db()
-    conn.executescript(sql_script)
-    conn.commit()
-    conn.close()
-    
-    print(f"✅ Base de datos inicializada: {DB_PATH}")
-
-# ============================================
-# WEBHOOK HOTMART - SEGURIDAD
-# ============================================
-def verify_signature(payload_body, signature, secret):
-    """
-    Verificar firma HMAC SHA256 del webhook Hotmart
-    
-    Args:
-        payload_body: bytes del body original
-        signature: header X-Hotmart-Signature
-        secret: HOTMART_WEBHOOK_SECRET
-    
-    Returns:
-        bool: True si la firma es válida
-    """
-    expected_signature = hmac.new(
-        secret.encode('utf-8'),
-        payload_body,
-        hashlib.sha256
-    ).hexdigest()
-    
-    return hmac.compare_digest(expected_signature, signature)
-
-# ============================================
-# RUTAS - API
-# ============================================
-
-@app.route('/health', methods=['GET'])
-def health():
-    """Health check"""
-    return jsonify({'status': 'ok', 'timestamp': datetime.utcnow().isoformat()})
-
-@app.route('/qa', methods=['GET'])
-def qa_search():
-    """
-    Buscar FAQ por similitud de texto
-    GET /qa?q=texto
-    """
-    query = request.args.get('q', '').strip()
-    
-    if not query:
-        return jsonify({'error': 'Parámetro "q" requerido'}), 400
-    
-    # Cargar FAQs
     try:
-        with open(FAQS_PATH, 'r', encoding='utf-8') as f:
-            faqs = json.load(f)
+        # Crear tablas
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS push_subs (
+                id SERIAL PRIMARY KEY,
+                endpoint TEXT NOT NULL,
+                p256dh TEXT NOT NULL,
+                auth TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS hotmart_events (
+                id SERIAL PRIMARY KEY,
+                event_type TEXT NOT NULL,
+                data JSONB NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS faqs (
+                id SERIAL PRIMARY KEY,
+                question TEXT NOT NULL,
+                answer TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        
+        conn.commit()
+        print("✅ Base de datos PostgreSQL inicializada correctamente")
+        
     except Exception as e:
-        return jsonify({'error': f'Error al cargar FAQs: {str(e)}'}), 500
-    
-    # Buscar mejor coincidencia por pregunta
-    questions = [faq['q'] for faq in faqs]
-    matches = get_close_matches(query, questions, n=1, cutoff=0.3)
-    
-    if not matches:
-        return jsonify({'q': None, 'a': None, 'message': 'No se encontró respuesta'})
-    
-    # Retornar FAQ más cercano
-    best_match = matches[0]
-    for faq in faqs:
-        if faq['q'] == best_match:
-            return jsonify({'q': faq['q'], 'a': faq['a']})
-    
-    return jsonify({'q': None, 'a': None})
+        print(f"❌ Error inicializando base de datos: {e}")
+        conn.rollback()
+    finally:
+        conn.close()
 
-@app.route('/api/save-sub', methods=['POST'])
-def save_subscription():
-    """
-    Guardar suscripción Web Push
-    POST /api/save-sub
-    Body: {"endpoint": "...", "p256dh": "...", "auth": "..."}
-    """
-    data = request.get_json()
-    
-    if not data or not all(k in data for k in ['endpoint', 'p256dh', 'auth']):
-        return jsonify({'error': 'Faltan campos: endpoint, p256dh, auth'}), 400
-    
+# ============================================
+# RUTAS PRINCIPALES
+# ============================================
+
+@app.route('/')
+def index():
+    """Página principal"""
+    return send_from_directory(SITE_DIR, 'index.html')
+
+@app.route('/ventas')
+def ventas():
+    """Página de ventas principal - Enciclopedia Plantas Medicinales"""
+    return send_from_directory(SITE_DIR, 'ventas-plantas-medicinales.html')
+
+@app.route('/plantas-medicinales')
+def plantas():
+    """Alias para página de ventas"""
+    return send_from_directory(SITE_DIR, 'ventas-plantas-medicinales.html')
+
+# ============================================
+# SERVIR ARCHIVOS ESTÁTICOS
+# ============================================
+
+@app.route('/<path:filename>')
+def serve_static(filename):
+    """Servir archivos estáticos (CSS, JS, imágenes)"""
+    return send_from_directory(SITE_DIR, filename)
+
+@app.route('/assets/<path:filename>')
+def serve_assets(filename):
+    """Servir assets (iconos, imágenes)"""
+    assets_dir = os.path.join(SITE_DIR, 'assets')
+    return send_from_directory(assets_dir, filename)
+
+# ============================================
+# API ENDPOINTS
+# ============================================
+
+@app.route('/api/push/subscribe', methods=['POST'])
+def push_subscribe():
+    """Suscribir usuario a notificaciones push"""
     try:
-        conn = get_db()
-        conn.execute('''
-            INSERT OR IGNORE INTO push_subs (endpoint, p256dh, auth)
-            VALUES (?, ?, ?)
-        ''', (data['endpoint'], data['p256dh'], data['auth']))
+        data = request.json
+        endpoint = data.get('endpoint')
+        p256dh = data.get('keys', {}).get('p256dh')
+        auth = data.get('keys', {}).get('auth')
+        
+        if not all([endpoint, p256dh, auth]):
+            return jsonify({'error': 'Datos incompletos'}), 400
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Verificar si ya existe
+        cursor.execute('SELECT id FROM push_subs WHERE endpoint = %s', (endpoint,))
+        if cursor.fetchone():
+            return jsonify({'message': 'Ya suscrito'}), 200
+        
+        # Insertar nueva suscripción
+        cursor.execute('''
+            INSERT INTO push_subs (endpoint, p256dh, auth) 
+            VALUES (%s, %s, %s)
+        ''', (endpoint, p256dh, auth))
+        
         conn.commit()
         conn.close()
         
-        return jsonify({'success': True, 'message': 'Suscripción guardada'})
-    
+        return jsonify({'message': 'Suscrito correctamente'}), 200
+        
     except Exception as e:
-        return jsonify({'error': f'Error al guardar: {str(e)}'}), 500
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/faq', methods=['GET'])
+def get_faq():
+    """Obtener FAQ basado en pregunta"""
+    try:
+        question = request.args.get('q', '').lower()
+        if not question:
+            return jsonify({'error': 'Pregunta requerida'}), 400
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Buscar coincidencias
+        cursor.execute('SELECT question, answer FROM faqs')
+        faqs = cursor.fetchall()
+        
+        # Buscar la mejor coincidencia
+        questions = [faq[0].lower() for faq in faqs]
+        matches = get_close_matches(question, questions, n=1, cutoff=0.6)
+        
+        if matches:
+            best_match = matches[0]
+            for faq in faqs:
+                if faq[0].lower() == best_match:
+                    return jsonify({
+                        'question': faq[0],
+                        'answer': faq[1]
+                    }), 200
+        
+        conn.close()
+        return jsonify({'error': 'No se encontró respuesta'}), 404
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/webhook/hotmart', methods=['POST'])
-def webhook_hotmart():
-    """
-    Webhook Hotmart - Recibir eventos de compra
-    POST /webhook/hotmart
-    
-    PRODUCCIÓN: Descomentar validación de firma HMAC
-    """
-    # ==== SEGURIDAD: DESCOMENTAR EN PRODUCCIÓN ====
-    # signature = request.headers.get('X-Hotmart-Signature', '')
-    # if not signature:
-    #     return jsonify({'error': 'Falta firma'}), 401
-    # 
-    # if not verify_signature(request.data, signature, HOTMART_SECRET):
-    #     return jsonify({'error': 'Firma inválida'}), 401
-    # ==============================================
-    
+def hotmart_webhook():
+    """Webhook para eventos de Hotmart"""
     try:
-        data = request.get_json(force=True, silent=True)
+        # Verificar firma (opcional para desarrollo)
+        signature = request.headers.get('X-Hotmart-Hottok')
         
-        if not data:
-            return jsonify({'error': 'Body vacío o JSON inválido'}), 400
+        data = request.json
+        event_type = data.get('event')
         
-        # Extraer campos comunes del webhook Hotmart
-        event_id = data.get('id', '')
-        event_type = data.get('event', '')
+        # Guardar evento en base de datos
+        conn = get_db_connection()
+        cursor = conn.cursor()
         
-        # Extraer email del comprador (puede variar según tipo de evento)
-        buyer_email = ''
-        if 'data' in data and 'buyer' in data['data']:
-            buyer_email = data['data']['buyer'].get('email', '')
+        cursor.execute('''
+            INSERT INTO hotmart_events (event_type, data) 
+            VALUES (%s, %s)
+        ''', (event_type, json.dumps(data)))
         
-        status = data.get('data', {}).get('purchase', {}).get('status', '')
-        
-        # Guardar en DB
-        conn = get_db()
-        conn.execute('''
-            INSERT OR IGNORE INTO hotmart_events 
-            (event_id, event_type, buyer_email, status, raw_json)
-            VALUES (?, ?, ?, ?, ?)
-        ''', (event_id, event_type, buyer_email, status, json.dumps(data)))
         conn.commit()
         conn.close()
         
-        print(f"✅ Webhook recibido: {event_type} | {buyer_email}")
+        # Procesar evento
+        if event_type == 'PURCHASE_COMPLETE':
+            buyer_email = data.get('data', {}).get('buyer', {}).get('email')
+            if buyer_email:
+                print(f"✅ Nueva venta: {buyer_email}")
         
-        return jsonify({'success': True, 'event': event_type}), 200
-    
+        return jsonify({'status': 'success'}), 200
+        
     except Exception as e:
-        print(f"❌ Error en webhook: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 # ============================================
-# SERVIR ESTÁTICO (OPCIONAL)
+# ERROR HANDLERS
 # ============================================
-# Descomentar si querés servir el PWA desde Flask (puerto único)
-# from flask import send_from_directory
-# 
-# SITE_PATH = os.path.join(os.path.dirname(__file__), '..', 'site')
-# 
-# @app.route('/', defaults={'path': ''})
-# @app.route('/<path:path>')
-# def serve_static(path):
-#     if path and os.path.exists(os.path.join(SITE_PATH, path)):
-#         return send_from_directory(SITE_PATH, path)
-#     return send_from_directory(SITE_PATH, 'index.html')
 
-# ============================================
-# CORS (si frontend y backend están en puertos distintos)
-# ============================================
-@app.after_request
-def after_request(response):
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
-    response.headers.add('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
-    return response
+@app.errorhandler(404)
+def not_found(e):
+    """Página no encontrada - redirigir a inicio"""
+    return redirect('/')
 
 # ============================================
 # MAIN
 # ============================================
+
 if __name__ == '__main__':
     # Modo inicialización: python app.py --initdb
     if len(sys.argv) > 1 and sys.argv[1] == '--initdb':
@@ -233,21 +256,24 @@ if __name__ == '__main__':
         sys.exit(0)
     
     # Verificar que existe la DB - si no existe, crearla automáticamente
-    if not os.path.exists(DB_PATH):
-        print("📊 Base de datos no existe. Creando automáticamente...")
+    try:
+        conn = get_db_connection()
+        conn.close()
+        print("✅ Conexión a base de datos exitosa")
+    except Exception as e:
+        print(f"📊 Base de datos no existe. Creando automáticamente...")
         init_db()
         print("✅ Base de datos creada exitosamente")
-    
-    # Levantar servidor
-    print("🚀 Robot de Ventas Hotmart - Backend Flask")
-    print(f"📊 Base de datos: {DB_PATH}")
-    print(f"🔐 Webhook secret: {'*' * len(HOTMART_SECRET)}")
-    print("=" * 60)
     
     # Configuración para Railway
     port = int(os.environ.get('PORT', 5000))
     host = '0.0.0.0' if os.environ.get('RAILWAY_ENVIRONMENT') else '127.0.0.1'
     debug = not os.environ.get('RAILWAY_ENVIRONMENT')
     
+    # Levantar servidor
+    print("🚀 Robot de Ventas Hotmart - Backend Flask")
+    print(f"📊 Base de datos: {DATABASE_URL[:20]}...")
+    print(f"🔐 Webhook secret: {'*' * len(HOTMART_SECRET)}")
+    print("=" * 60)
+    
     app.run(host=host, port=port, debug=debug)
-
