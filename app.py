@@ -476,18 +476,36 @@ if __name__ == '__main__':
         init_db()
         sys.exit(0)
     
-    # Inicializar base de datos PostgreSQL siempre
-    print("📊 Inicializando base de datos PostgreSQL...")
+    # Verificar conexión rápida a PostgreSQL
+    print("🔗 Verificando conexión a PostgreSQL...")
     try:
-        init_db()
-        print("✅ Base de datos PostgreSQL inicializada correctamente")
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT 1")
+        conn.close()
+        print("✅ Conexión a PostgreSQL exitosa")
+        
+        # Solo inicializar si es necesario
+        print("📊 Verificando si necesitamos inicializar tablas...")
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'push_subs')")
+        tables_exist = cursor.fetchone()[0]
+        conn.close()
+        
+        if not tables_exist:
+            print("📊 Inicializando base de datos PostgreSQL...")
+            init_db()
+            print("✅ Base de datos PostgreSQL inicializada correctamente")
+        else:
+            print("✅ Tablas ya existen, saltando inicialización")
+            
     except Exception as e:
-        print(f"❌ Error inicializando base de datos: {e}")
-        print("🔄 Reintentando conexión...")
+        print(f"❌ Error conectando a PostgreSQL: {e}")
+        print("📊 Intentando inicializar base de datos...")
         try:
-            conn = get_db_connection()
-            conn.close()
-            print("✅ Conexión a PostgreSQL exitosa")
+            init_db()
+            print("✅ Base de datos PostgreSQL inicializada correctamente")
         except Exception as e2:
             print(f"❌ Error crítico: {e2}")
             sys.exit(1)
