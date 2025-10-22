@@ -59,41 +59,143 @@ def init_db():
     cursor = conn.cursor()
     
     try:
-        # Crear tablas
+        # Tabla de suscripciones Web Push
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS push_subs (
                 id SERIAL PRIMARY KEY,
-                endpoint TEXT NOT NULL,
+                endpoint TEXT NOT NULL UNIQUE,
                 p256dh TEXT NOT NULL,
                 auth TEXT NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                user_agent TEXT,
+                ip_address TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                last_used TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ''')
         
+        # Tabla de eventos de Hotmart (ventas)
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS hotmart_events (
                 id SERIAL PRIMARY KEY,
                 event_type TEXT NOT NULL,
+                transaction_id TEXT UNIQUE,
+                buyer_email TEXT,
+                buyer_name TEXT,
+                buyer_country TEXT,
+                product_name TEXT,
+                product_price DECIMAL(10,2),
+                currency TEXT DEFAULT 'USD',
+                purchase_date TIMESTAMP,
                 data JSONB NOT NULL,
+                processed BOOLEAN DEFAULT FALSE,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ''')
         
+        # Tabla de FAQs
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS faqs (
                 id SERIAL PRIMARY KEY,
                 question TEXT NOT NULL,
                 answer TEXT NOT NULL,
+                category TEXT DEFAULT 'general',
+                keywords TEXT[],
+                views INTEGER DEFAULT 0,
+                helpful INTEGER DEFAULT 0,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        
+        # Tabla de productos digitales
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS products (
+                id SERIAL PRIMARY KEY,
+                name TEXT NOT NULL,
+                description TEXT,
+                price DECIMAL(10,2),
+                currency TEXT DEFAULT 'USD',
+                hotmart_link TEXT,
+                category TEXT,
+                status TEXT DEFAULT 'active',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        
+        # Tabla de visitantes/leads
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS visitors (
+                id SERIAL PRIMARY KEY,
+                email TEXT UNIQUE,
+                name TEXT,
+                country TEXT,
+                source TEXT,
+                utm_source TEXT,
+                utm_medium TEXT,
+                utm_campaign TEXT,
+                subscribed BOOLEAN DEFAULT FALSE,
+                last_visit TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ''')
         
+        # Tabla de notificaciones enviadas
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS notifications (
+                id SERIAL PRIMARY KEY,
+                title TEXT NOT NULL,
+                body TEXT NOT NULL,
+                url TEXT,
+                sent_count INTEGER DEFAULT 0,
+                opened_count INTEGER DEFAULT 0,
+                clicked_count INTEGER DEFAULT 0,
+                status TEXT DEFAULT 'draft',
+                scheduled_at TIMESTAMP,
+                sent_at TIMESTAMP,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        
+        # Insertar FAQs iniciales
+        cursor.execute('''
+            INSERT INTO faqs (question, answer, category, keywords) VALUES
+            ('¿Qué plantas medicinales son mejores para el dolor de cabeza?', 
+             'La menta, lavanda y jengibre son especialmente efectivas para dolores de cabeza. La menta contiene mentol que relaja los músculos, la lavanda reduce la tensión y el jengibre tiene propiedades antiinflamatorias.', 
+             'plantas', 
+             ARRAY['dolor', 'cabeza', 'menta', 'lavanda', 'jengibre']),
+            ('¿Cómo cultivar plantas medicinales en casa?', 
+             'La mayoría de hierbas curativas se pueden cultivar en macetas. Necesitas luz solar, buen drenaje y riego moderado. Plantas como menta, manzanilla, albahaca y orégano son ideales para principiantes.', 
+             'cultivo', 
+             ARRAY['cultivar', 'casa', 'macetas', 'hierbas']),
+            ('¿Es seguro usar plantas medicinales con medicamentos?', 
+             'Algunas plantas pueden interactuar con medicamentos. Por ejemplo, el ginkgo puede aumentar el sangrado con anticoagulantes. Siempre consulta con tu médico antes de combinar plantas con medicamentos.', 
+             'seguridad', 
+             ARRAY['medicamentos', 'interacciones', 'seguro', 'consulta'])
+            ON CONFLICT DO NOTHING
+        ''')
+        
+        # Insertar producto inicial
+        cursor.execute('''
+            INSERT INTO products (name, description, price, currency, hotmart_link, category) VALUES
+            ('Enciclopedia de Plantas Medicinales', 
+             'Guía completa con más de 550 hierbas medicinales, preparados caseros, cultivo y propiedades terapéuticas', 
+             29.99, 
+             'USD', 
+             'https://go.hotmart.com/H102540942W', 
+             'libros-digitales')
+            ON CONFLICT DO NOTHING
+        ''')
+        
         conn.commit()
         print("✅ Base de datos PostgreSQL inicializada correctamente")
+        print("✅ Tablas creadas: push_subs, hotmart_events, faqs, products, visitors, notifications")
+        print("✅ FAQs y producto inicial insertados")
         
     except Exception as e:
         print(f"❌ Error inicializando base de datos: {e}")
         conn.rollback()
+        raise e
     finally:
         conn.close()
 
@@ -212,26 +314,134 @@ def hotmart_webhook():
         
         data = request.json
         event_type = data.get('event')
+        event_data = data.get('data', {})
         
-        # Guardar evento en base de datos
+        # Guardar evento en base de datos con datos estructurados
         conn = get_db_connection()
         cursor = conn.cursor()
         
+        # Extraer datos del comprador
+        buyer = event_data.get('buyer', {})
+        product = event_data.get('product', {})
+        transaction = event_data.get('transaction', {})
+        
         cursor.execute('''
-            INSERT INTO hotmart_events (event_type, data) 
-            VALUES (%s, %s)
-        ''', (event_type, json.dumps(data)))
+            INSERT INTO hotmart_events (
+                event_type, transaction_id, buyer_email, buyer_name, 
+                buyer_country, product_name, product_price, currency, 
+                purchase_date, data
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT (transaction_id) DO UPDATE SET
+                processed = FALSE,
+                data = EXCLUDED.data
+        ''', (
+            event_type,
+            transaction.get('transaction_id'),
+            buyer.get('email'),
+            buyer.get('name'),
+            buyer.get('country'),
+            product.get('name'),
+            product.get('price'),
+            transaction.get('currency', 'USD'),
+            transaction.get('purchase_date'),
+            json.dumps(data)
+        ))
         
         conn.commit()
         conn.close()
         
         # Procesar evento
         if event_type == 'PURCHASE_COMPLETE':
-            buyer_email = data.get('data', {}).get('buyer', {}).get('email')
+            buyer_email = buyer.get('email')
+            product_name = product.get('name')
             if buyer_email:
-                print(f"✅ Nueva venta: {buyer_email}")
+                print(f"✅ Nueva venta: {buyer_email} - {product_name}")
+                
+                # Aquí podrías enviar notificación push, email, etc.
         
         return jsonify({'status': 'success'}), 200
+        
+    except Exception as e:
+        print(f"❌ Error en webhook Hotmart: {e}")
+        return jsonify({'error': str(e)}), 500
+
+# ============================================
+# RUTAS DE ADMINISTRACIÓN
+# ============================================
+
+@app.route('/api/stats', methods=['GET'])
+def get_stats():
+    """Obtener estadísticas del negocio"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Estadísticas de ventas
+        cursor.execute('''
+            SELECT 
+                COUNT(*) as total_ventas,
+                SUM(product_price) as total_ingresos,
+                COUNT(DISTINCT buyer_email) as compradores_unicos,
+                COUNT(CASE WHEN created_at >= CURRENT_DATE THEN 1 END) as ventas_hoy
+            FROM hotmart_events 
+            WHERE event_type = 'PURCHASE_COMPLETE'
+        ''')
+        sales_stats = cursor.fetchone()
+        
+        # Estadísticas de suscripciones
+        cursor.execute('SELECT COUNT(*) FROM push_subs')
+        total_subs = cursor.fetchone()[0]
+        
+        # Estadísticas de FAQs
+        cursor.execute('SELECT COUNT(*) FROM faqs')
+        total_faqs = cursor.fetchone()[0]
+        
+        conn.close()
+        
+        return jsonify({
+            'ventas': {
+                'total': sales_stats[0] or 0,
+                'ingresos': float(sales_stats[1] or 0),
+                'compradores_unicos': sales_stats[2] or 0,
+                'ventas_hoy': sales_stats[3] or 0
+            },
+            'suscripciones': total_subs,
+            'faqs': total_faqs
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/ventas', methods=['GET'])
+def get_ventas():
+    """Obtener lista de ventas"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            SELECT buyer_email, buyer_name, product_name, product_price, 
+                   currency, purchase_date, created_at
+            FROM hotmart_events 
+            WHERE event_type = 'PURCHASE_COMPLETE'
+            ORDER BY created_at DESC
+            LIMIT 50
+        ''')
+        
+        ventas = []
+        for row in cursor.fetchall():
+            ventas.append({
+                'email': row[0],
+                'nombre': row[1],
+                'producto': row[2],
+                'precio': float(row[3] or 0),
+                'moneda': row[4],
+                'fecha_compra': row[5].isoformat() if row[5] else None,
+                'fecha_registro': row[6].isoformat() if row[6] else None
+            })
+        
+        conn.close()
+        return jsonify({'ventas': ventas}), 200
         
     except Exception as e:
         return jsonify({'error': str(e)}), 500
