@@ -466,16 +466,21 @@ if __name__ == '__main__':
         init_db()
         sys.exit(0)
     
-    # Verificar conexión a PostgreSQL
+    # Inicializar base de datos PostgreSQL siempre
+    print("📊 Inicializando base de datos PostgreSQL...")
     try:
-        conn = get_db_connection()
-        conn.close()
-        print("✅ Conexión a PostgreSQL exitosa")
-    except Exception as e:
-        print(f"❌ Error conectando a PostgreSQL: {e}")
-        print("📊 Intentando crear base de datos...")
         init_db()
-        print("✅ Base de datos PostgreSQL creada exitosamente")
+        print("✅ Base de datos PostgreSQL inicializada correctamente")
+    except Exception as e:
+        print(f"❌ Error inicializando base de datos: {e}")
+        print("🔄 Reintentando conexión...")
+        try:
+            conn = get_db_connection()
+            conn.close()
+            print("✅ Conexión a PostgreSQL exitosa")
+        except Exception as e2:
+            print(f"❌ Error crítico: {e2}")
+            sys.exit(1)
     
     # Configuración para Railway
     port = int(os.environ.get('PORT', 5000))
