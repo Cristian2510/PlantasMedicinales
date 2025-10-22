@@ -209,6 +209,16 @@ def index():
     """Página principal"""
     return send_from_directory(SITE_DIR, 'index.html')
 
+@app.route('/test')
+def test():
+    """Ruta de prueba"""
+    return jsonify({
+        'status': 'success',
+        'message': 'Aplicación funcionando correctamente',
+        'database': 'PostgreSQL',
+        'timestamp': datetime.now().isoformat()
+    })
+
 @app.route('/ventas')
 def ventas():
     """Página de ventas principal - Enciclopedia Plantas Medicinales"""
