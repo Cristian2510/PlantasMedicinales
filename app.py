@@ -232,11 +232,11 @@ if __name__ == '__main__':
         init_db()
         sys.exit(0)
     
-    # Verificar que existe la DB
+    # Verificar que existe la DB - si no existe, crearla automáticamente
     if not os.path.exists(DB_PATH):
-        print("❌ Base de datos no existe. Ejecutá primero:")
-        print("   python app.py --initdb")
-        sys.exit(1)
+        print("📊 Base de datos no existe. Creando automáticamente...")
+        init_db()
+        print("✅ Base de datos creada exitosamente")
     
     # Levantar servidor
     print("🚀 Robot de Ventas Hotmart - Backend Flask")
