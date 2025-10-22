@@ -34,7 +34,7 @@ VAPID_PUBLIC_KEY = os.getenv('VAPID_PUBLIC_KEY', '')
 VAPID_PRIVATE_KEY = os.getenv('VAPID_PRIVATE_KEY', '')
 
 # Configuración de base de datos PostgreSQL
-DATABASE_URL = os.getenv('DATABASE_URL', 'sqlite:///robot.db')
+DATABASE_URL = os.getenv('DATABASE_URL', 'postgresql://postgres:mbxloLXbsYYceOKxrXKuTcngXWLxvsSE@postgres.railway.internal:5432/railway')
 
 # Directorio de archivos estáticos
 SITE_DIR = os.path.join(os.path.dirname(__file__), 'site')
@@ -44,17 +44,18 @@ SITE_DIR = os.path.join(os.path.dirname(__file__), 'site')
 # ============================================
 
 def get_db_connection():
-    """Obtener conexión a la base de datos"""
-    if DATABASE_URL.startswith('postgresql://'):
-        # PostgreSQL
-        return psycopg2.connect(DATABASE_URL)
-    else:
-        # SQLite (fallback)
-        import sqlite3
-        return sqlite3.connect('robot.db')
+    """Obtener conexión a la base de datos PostgreSQL"""
+    try:
+        print(f"🔗 Conectando a PostgreSQL: {DATABASE_URL[:30]}...")
+        conn = psycopg2.connect(DATABASE_URL)
+        return conn
+    except Exception as e:
+        print(f"❌ Error conectando a PostgreSQL: {e}")
+        raise e
 
 def init_db():
-    """Inicializar base de datos"""
+    """Inicializar base de datos PostgreSQL"""
+    print("📊 Inicializando base de datos PostgreSQL...")
     conn = get_db_connection()
     cursor = conn.cursor()
     
@@ -465,15 +466,16 @@ if __name__ == '__main__':
         init_db()
         sys.exit(0)
     
-    # Verificar que existe la DB - si no existe, crearla automáticamente
+    # Verificar conexión a PostgreSQL
     try:
         conn = get_db_connection()
         conn.close()
-        print("✅ Conexión a base de datos exitosa")
+        print("✅ Conexión a PostgreSQL exitosa")
     except Exception as e:
-        print(f"📊 Base de datos no existe. Creando automáticamente...")
+        print(f"❌ Error conectando a PostgreSQL: {e}")
+        print("📊 Intentando crear base de datos...")
         init_db()
-        print("✅ Base de datos creada exitosamente")
+        print("✅ Base de datos PostgreSQL creada exitosamente")
     
     # Configuración para Railway
     port = int(os.environ.get('PORT', 5000))
@@ -482,7 +484,7 @@ if __name__ == '__main__':
     
     # Levantar servidor
     print("🚀 Robot de Ventas Hotmart - Backend Flask")
-    print(f"📊 Base de datos: {DATABASE_URL[:20]}...")
+    print(f"📊 Base de datos: PostgreSQL")
     print(f"🔐 Webhook secret: {'*' * len(HOTMART_SECRET)}")
     print("=" * 60)
     
