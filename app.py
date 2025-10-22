@@ -34,7 +34,7 @@ VAPID_PUBLIC_KEY = os.getenv('VAPID_PUBLIC_KEY', '')
 VAPID_PRIVATE_KEY = os.getenv('VAPID_PRIVATE_KEY', '')
 
 # Configuración de base de datos PostgreSQL
-DATABASE_URL = os.getenv('DATABASE_URL', 'postgresql://postgres:mbxloLXbsYYceOKxrXKuTcngXWLxvsSE@postgres.railway.internal:5432/railway')
+DATABASE_URL = os.getenv('DATABASE_URL', 'sqlite:///robot.db')
 
 # Directorio de archivos estáticos
 SITE_DIR = os.path.join(os.path.dirname(__file__), 'site')
