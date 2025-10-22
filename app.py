@@ -61,11 +61,19 @@ def not_found(e):
 # ============================================
 
 if __name__ == '__main__':
+    # Configuración para Railway
+    port = int(os.environ.get('PORT', 5000))
+    host = '0.0.0.0' if os.environ.get('RAILWAY_ENVIRONMENT') else '127.0.0.1'
+    debug = not os.environ.get('RAILWAY_ENVIRONMENT')
+    
     print("=" * 60)
     print("🚀 ROBOT DE VENTAS HOTMART")
     print("=" * 60)
     print("")
     print("✅ Servidor iniciado correctamente")
+    print(f"🌐 Puerto: {port}")
+    print(f"🏠 Host: {host}")
+    print(f"🔧 Debug: {debug}")
     print("")
     print("📄 Páginas disponibles:")
     print("   • Home:        http://127.0.0.1:5000/")
@@ -78,8 +86,8 @@ if __name__ == '__main__':
     
     # Levantar servidor
     app.run(
-        host='127.0.0.1',
-        port=5000,
-        debug=True
+        host=host,
+        port=port,
+        debug=debug
     )
 
