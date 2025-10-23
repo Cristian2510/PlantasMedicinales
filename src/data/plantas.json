@@ -1,0 +1,542 @@
+[
+  {
+    "id": "manzanilla",
+    "nombreComun": "Manzanilla",
+    "nombreCientifico": "Matricaria chamomilla",
+    "usos": ["Digestión", "Ansiedad", "Insomnio", "Inflamación"],
+    "preparado": "Infusión: 1-2 cucharaditas por taza, reposar 5-7 minutos",
+    "contraindicaciones": ["Alergia a asteráceas", "Embarazo avanzado"],
+    "fuente": "https://medlineplus.gov/spanish/druginfo/herb_All.html",
+    "descripcion": "Planta herbácea anual con flores blancas y centro amarillo, ampliamente utilizada en medicina tradicional."
+  },
+  {
+    "id": "menta",
+    "nombreComun": "Menta",
+    "nombreCientifico": "Mentha piperita",
+    "usos": ["Digestión", "Náuseas", "Dolor de cabeza", "Congestión nasal"],
+    "preparado": "Infusión: 1 cucharadita por taza, reposar 3-5 minutos",
+    "contraindicaciones": ["Reflujo gastroesofágico", "Niños menores de 2 años"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6358922/",
+    "descripcion": "Hierba aromática perenne con hojas dentadas y aroma refrescante característico."
+  },
+  {
+    "id": "arnica",
+    "nombreComun": "Árnica",
+    "nombreCientifico": "Arnica montana",
+    "usos": ["Golpes", "Moretones", "Inflamación muscular", "Dolor articular"],
+    "preparado": "Uso tópico: Crema o gel al 10-20%, aplicar 2-3 veces al día",
+    "contraindicaciones": ["Heridas abiertas", "Uso interno", "Embarazo"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5551543/",
+    "descripcion": "Planta alpina con flores amarillas, tradicionalmente usada para tratar contusiones y dolores musculares."
+  },
+  {
+    "id": "curcuma",
+    "nombreComun": "Cúrcuma",
+    "nombreCientifico": "Curcuma longa",
+    "usos": ["Inflamación", "Digestión", "Protección hepática", "Antioxidante"],
+    "preparado": "Polvo: 1-3 gramos al día con pimienta negra para mejorar absorción",
+    "contraindicaciones": ["Cálculos biliares", "Medicamentos anticoagulantes"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3633300/",
+    "descripcion": "Rizoma de color amarillo intenso, ingrediente principal del curry y reconocido por sus propiedades antiinflamatorias."
+  },
+  {
+    "id": "jengibre",
+    "nombreComun": "Jengibre",
+    "nombreCientifico": "Zingiber officinale",
+    "usos": ["Náuseas", "Digestión", "Inflamación", "Resfriados"],
+    "preparado": "Té: 1-2 cm de raíz fresca por taza, hervir 10 minutos",
+    "contraindicaciones": ["Medicamentos anticoagulantes", "Cálculos biliares"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3665023/",
+    "descripcion": "Rizoma aromático y picante, ampliamente utilizado en gastronomía y medicina tradicional."
+  },
+  {
+    "id": "lavanda",
+    "nombreComun": "Lavanda",
+    "nombreCientifico": "Lavandula angustifolia",
+    "usos": ["Ansiedad", "Insomnio", "Relajación", "Dolor de cabeza"],
+    "preparado": "Infusión: 1-2 cucharaditas por taza, reposar 5 minutos",
+    "contraindicaciones": ["Alergia a lavanda", "Uso excesivo puede causar somnolencia"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3612440/",
+    "descripcion": "Arbusto aromático con flores moradas, conocido por su efecto relajante y propiedades calmantes."
+  },
+  {
+    "id": "valeriana",
+    "nombreComun": "Valeriana",
+    "nombreCientifico": "Valeriana officinalis",
+    "usos": ["Insomnio", "Ansiedad", "Nerviosismo", "Estrés"],
+    "preparado": "Tintura: 30-60 gotas antes de dormir, o infusión 1-2 gramos",
+    "contraindicaciones": ["Embarazo", "Lactancia", "Medicamentos sedantes"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4394901/",
+    "descripcion": "Planta perenne con raíz aromática, tradicionalmente usada como sedante natural suave."
+  },
+  {
+    "id": "equinacea",
+    "nombreComun": "Equinácea",
+    "nombreCientifico": "Echinacea purpurea",
+    "usos": ["Sistema inmunológico", "Resfriados", "Infecciones respiratorias"],
+    "preparado": "Tintura: 2-4 ml tres veces al día durante máximo 8 semanas",
+    "contraindicaciones": ["Alergia a asteráceas", "Enfermedades autoinmunes"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4441164/",
+    "descripcion": "Planta herbácea con flores púrpuras, popular por sus propiedades inmunoestimulantes."
+  },
+  {
+    "id": "ginkgo",
+    "nombreComun": "Ginkgo",
+    "nombreCientifico": "Ginkgo biloba",
+    "usos": ["Circulación", "Memoria", "Concentración", "Tinnitus"],
+    "preparado": "Extracto estandarizado: 120-240 mg al día dividido en 2-3 dosis",
+    "contraindicaciones": ["Medicamentos anticoagulantes", "Epilepsia"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3679846/",
+    "descripcion": "Árbol milenario con hojas en forma de abanico, utilizado para mejorar la circulación cerebral."
+  },
+  {
+    "id": "aloe-vera",
+    "nombreComun": "Aloe Vera",
+    "nombreCientifico": "Aloe barbadensis",
+    "usos": ["Quemaduras", "Heridas", "Piel seca", "Digestión"],
+    "preparado": "Gel tópico: aplicar directamente sobre la piel afectada",
+    "contraindicaciones": ["Embarazo", "Enfermedades renales", "Uso interno prolongado"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2763764/",
+    "descripcion": "Planta suculenta con hojas carnosas, conocida por sus propiedades cicatrizantes y calmantes."
+  },
+  {
+    "id": "calendula",
+    "nombreComun": "Caléndula",
+    "nombreCientifico": "Calendula officinalis",
+    "usos": ["Heridas", "Irritación cutánea", "Antiinflamatorio", "Antiséptico"],
+    "preparado": "Crema o ungüento: aplicar 2-3 veces al día sobre la zona afectada",
+    "contraindicaciones": ["Alergia a asteráceas", "Embarazo"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3841996/",
+    "descripcion": "Planta herbácea con flores naranjas o amarillas, tradicionalmente usada para tratar problemas de piel."
+  },
+  {
+    "id": "romero",
+    "nombreComun": "Romero",
+    "nombreCientifico": "Rosmarinus officinalis",
+    "usos": ["Circulación", "Memoria", "Digestión", "Antiinflamatorio"],
+    "preparado": "Infusión: 1-2 cucharaditas por taza, reposar 5-10 minutos",
+    "contraindicaciones": ["Embarazo", "Epilepsia", "Presión arterial alta"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4749867/",
+    "descripcion": "Arbusto aromático perenne con hojas estrechas, conocido por sus propiedades estimulantes y antioxidantes."
+  },
+  {
+    "id": "salvia",
+    "nombreComun": "Salvia",
+    "nombreCientifico": "Salvia officinalis",
+    "usos": ["Garganta irritada", "Digestión", "Memoria", "Antioxidante"],
+    "preparado": "Gargarismo: infusión concentrada, hacer gárgaras 2-3 veces al día",
+    "contraindicaciones": ["Embarazo", "Lactancia", "Uso excesivo"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5318325/",
+    "descripcion": "Hierba aromática con hojas grisáceas, tradicionalmente usada para problemas de garganta y digestión."
+  },
+  {
+    "id": "tomillo",
+    "nombreComun": "Tomillo",
+    "nombreCientifico": "Thymus vulgaris",
+    "usos": ["Tos", "Congestión", "Antiséptico", "Digestión"],
+    "preparado": "Infusión: 1-2 cucharaditas por taza, reposar 5-7 minutos",
+    "contraindicaciones": ["Embarazo", "Hipertiroidismo"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5598118/",
+    "descripcion": "Hierba aromática pequeña con hojas diminutas, conocida por sus propiedades expectorantes y antisépticas."
+  },
+  {
+    "id": "ortiga",
+    "nombreComun": "Ortiga",
+    "nombreCientifico": "Urtica dioica",
+    "usos": ["Artritis", "Alergias", "Problemas urinarios", "Nutritivo"],
+    "preparado": "Infusión: 1-2 cucharaditas por taza, reposar 10 minutos",
+    "contraindicaciones": ["Embarazo", "Insuficiencia cardíaca", "Edema"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3582329/",
+    "descripcion": "Planta herbácea con pelos urticantes, rica en minerales y tradicionalmente usada para problemas articulares."
+  },
+  {
+    "id": "diente-leon",
+    "nombreComun": "Diente de León",
+    "nombreCientifico": "Taraxacum officinale",
+    "usos": ["Digestión", "Hígado", "Diurético", "Antioxidante"],
+    "preparado": "Infusión: 1-2 cucharaditas de raíz por taza, hervir 10 minutos",
+    "contraindicaciones": ["Obstrucción biliar", "Gastritis", "Cálculos biliares"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5553762/",
+    "descripcion": "Planta herbácea común con flores amarillas, tradicionalmente usada como depurativo y digestivo."
+  },
+  {
+    "id": "hinojo",
+    "nombreComun": "Hinojo",
+    "nombreCientifico": "Foeniculum vulgare",
+    "usos": ["Digestión", "Gases", "Cólicos", "Lactancia"],
+    "preparado": "Infusión: 1 cucharadita de semillas por taza, reposar 5-10 minutos",
+    "contraindicaciones": ["Embarazo", "Alergia a apio"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4137549/",
+    "descripcion": "Planta aromática con semillas dulces, tradicionalmente usada para problemas digestivos y cólicos."
+  },
+  {
+    "id": "anís",
+    "nombreComun": "Anís",
+    "nombreCientifico": "Pimpinella anisum",
+    "usos": ["Digestión", "Gases", "Tos", "Lactancia"],
+    "preparado": "Infusión: 1 cucharadita de semillas por taza, reposar 5 minutos",
+    "contraindicaciones": ["Embarazo", "Alergia a apio"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3405660/",
+    "descripcion": "Planta herbácea con semillas aromáticas dulces, tradicionalmente usada para problemas digestivos y respiratorios."
+  },
+  {
+    "id": "eucalipto",
+    "nombreComun": "Eucalipto",
+    "nombreCientifico": "Eucalyptus globulus",
+    "usos": ["Congestión", "Tos", "Antiséptico", "Vaporizaciones"],
+    "preparado": "Vaporización: 5-10 gotas de aceite esencial en agua caliente",
+    "contraindicaciones": ["Niños menores de 6 años", "Asma", "Uso interno"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3842692/",
+    "descripcion": "Árbol alto con hojas aromáticas, conocido por sus propiedades expectorantes y antisépticas."
+  },
+  {
+    "id": "malva",
+    "nombreComun": "Malva",
+    "nombreCientifico": "Malva sylvestris",
+    "usos": ["Tos", "Garganta irritada", "Antiinflamatorio", "Digestión"],
+    "preparado": "Infusión: 1-2 cucharaditas por taza, reposar 10 minutos",
+    "contraindicaciones": ["Alergia a malváceas"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3834722/",
+    "descripcion": "Planta herbácea con flores rosadas, tradicionalmente usada para problemas respiratorios y digestivos."
+  },
+  {
+    "id": "llanten",
+    "nombreComun": "Llantén",
+    "nombreCientifico": "Plantago major",
+    "usos": ["Tos", "Heridas", "Antiinflamatorio", "Digestión"],
+    "preparado": "Infusión: 1-2 cucharaditas por taza, reposar 5-10 minutos",
+    "contraindicaciones": ["Alergia a plantago"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3834722/",
+    "descripcion": "Planta herbácea común con hojas anchas, tradicionalmente usada para problemas respiratorios y cutáneos."
+  },
+  {
+    "id": "colageno",
+    "nombreComun": "Cola de Caballo",
+    "nombreCientifico": "Equisetum arvense",
+    "usos": ["Retención de líquidos", "Huesos", "Cabello", "Uñas"],
+    "preparado": "Infusión: 1-2 cucharaditas por taza, reposar 10 minutos",
+    "contraindicaciones": ["Embarazo", "Lactancia", "Insuficiencia cardíaca"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5551543/",
+    "descripcion": "Planta primitiva con tallos huecos, rica en silicio y tradicionalmente usada como diurético."
+  },
+  {
+    "id": "hibisco",
+    "nombreComun": "Hibisco",
+    "nombreCientifico": "Hibiscus sabdariffa",
+    "usos": ["Presión arterial", "Antioxidante", "Digestión", "Colesterol"],
+    "preparado": "Infusión: 1-2 cucharaditas por taza, reposar 5-10 minutos",
+    "contraindicaciones": ["Hipotensión", "Embarazo"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5551543/",
+    "descripcion": "Planta con flores grandes y coloridas, conocida por sus propiedades antioxidantes y cardiovasculares."
+  },
+  {
+    "id": "te-verde",
+    "nombreComun": "Té Verde",
+    "nombreCientifico": "Camellia sinensis",
+    "usos": ["Antioxidante", "Metabolismo", "Energía", "Protección cardiovascular"],
+    "preparado": "Infusión: 1 cucharadita por taza, agua a 80°C, reposar 2-3 minutos",
+    "contraindicaciones": ["Insomnio", "Ansiedad", "Anemia"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3679539/",
+    "descripcion": "Hoja de té sin fermentar, rica en antioxidantes y tradicionalmente asociada con beneficios para la salud."
+  },
+  {
+    "id": "ginseng",
+    "nombreComun": "Ginseng",
+    "nombreCientifico": "Panax ginseng",
+    "usos": ["Energía", "Estrés", "Memoria", "Sistema inmunológico"],
+    "preparado": "Extracto: 200-400 mg al día, preferiblemente por la mañana",
+    "contraindicaciones": ["Hipertensión", "Insomnio", "Embarazo"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3659610/",
+    "descripcion": "Raíz adaptógena tradicional, conocida por sus propiedades energizantes y de apoyo al sistema inmunológico."
+  },
+  {
+    "id": "regaliz",
+    "nombreComun": "Regaliz",
+    "nombreCientifico": "Glycyrrhiza glabra",
+    "usos": ["Tos", "Garganta irritada", "Digestión", "Antiinflamatorio"],
+    "preparado": "Infusión: 1 cucharadita de raíz por taza, reposar 5-10 minutos",
+    "contraindicaciones": ["Hipertensión", "Embarazo", "Insuficiencia cardíaca"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5551543/",
+    "descripcion": "Raíz dulce y aromática, tradicionalmente usada para problemas respiratorios y digestivos."
+  },
+  {
+    "id": "boldo",
+    "nombreComun": "Boldo",
+    "nombreCientifico": "Peumus boldus",
+    "usos": ["Digestión", "Hígado", "Gases", "Digestión pesada"],
+    "preparado": "Infusión: 1 cucharadita por taza, reposar 5-7 minutos",
+    "contraindicaciones": ["Embarazo", "Lactancia", "Obstrucción biliar"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5551543/",
+    "descripcion": "Árbol chileno con hojas aromáticas, tradicionalmente usado para problemas digestivos y hepáticos."
+  },
+  {
+    "id": "pasiflora",
+    "nombreComun": "Pasiflora",
+    "nombreCientifico": "Passiflora incarnata",
+    "usos": ["Ansiedad", "Insomnio", "Nerviosismo", "Estrés"],
+    "preparado": "Infusión: 1-2 cucharaditas por taza, reposar 10 minutos",
+    "contraindicaciones": ["Embarazo", "Medicamentos sedantes"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4394901/",
+    "descripcion": "Planta trepadora con flores exóticas, tradicionalmente usada como sedante natural suave."
+  },
+  {
+    "id": "tilo",
+    "nombreComun": "Tilo",
+    "nombreCientifico": "Tilia cordata",
+    "usos": ["Relajación", "Insomnio", "Ansiedad", "Digestión"],
+    "preparado": "Infusión: 1-2 cucharaditas por taza, reposar 5-10 minutos",
+    "contraindicaciones": ["Alergia a tilo"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4394901/",
+    "descripcion": "Árbol con flores aromáticas, tradicionalmente usado como relajante y digestivo suave."
+  },
+  {
+    "id": "melisa",
+    "nombreComun": "Melisa",
+    "nombreCientifico": "Melissa officinalis",
+    "usos": ["Ansiedad", "Digestión", "Insomnio", "Relajación"],
+    "preparado": "Infusión: 1-2 cucharaditas por taza, reposar 5-7 minutos",
+    "contraindicaciones": ["Hipotiroidismo", "Embarazo"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4394901/",
+    "descripcion": "Hierba aromática con aroma a limón, tradicionalmente usada para problemas nerviosos y digestivos."
+  },
+  {
+    "id": "harpagofito",
+    "nombreComun": "Harpagofito",
+    "nombreCientifico": "Harpagophytum procumbens",
+    "usos": ["Artritis", "Dolor articular", "Inflamación", "Dolor de espalda"],
+    "preparado": "Extracto: 600-1200 mg al día dividido en 2-3 dosis",
+    "contraindicaciones": ["Embarazo", "Lactancia", "Úlcera gástrica"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5551543/",
+    "descripcion": "Planta africana con raíz tuberosa, conocida por sus propiedades antiinflamatorias y analgésicas."
+  },
+  {
+    "id": "corteza-sauce",
+    "nombreComun": "Corteza de Sauce",
+    "nombreCientifico": "Salix alba",
+    "usos": ["Dolor", "Inflamación", "Fiebre", "Dolor de cabeza"],
+    "preparado": "Decocción: 1-2 gramos de corteza por taza, hervir 10 minutos",
+    "contraindicaciones": ["Alergia a aspirina", "Embarazo", "Niños"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5551543/",
+    "descripcion": "Corteza del sauce blanco, contiene salicina (precursor de la aspirina) y tradicionalmente usada como analgésico."
+  },
+  {
+    "id": "uña-gato",
+    "nombreComun": "Uña de Gato",
+    "nombreCientifico": "Uncaria tomentosa",
+    "usos": ["Sistema inmunológico", "Inflamación", "Artritis", "Digestión"],
+    "preparado": "Extracto: 250-350 mg al día dividido en 2-3 dosis",
+    "contraindicaciones": ["Embarazo", "Lactancia", "Enfermedades autoinmunes"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4441164/",
+    "descripcion": "Planta trepadora amazónica, conocida por sus propiedades inmunoestimulantes y antiinflamatorias."
+  },
+  {
+    "id": "maca",
+    "nombreComun": "Maca",
+    "nombreCientifico": "Lepidium meyenii",
+    "usos": ["Energía", "Libido", "Fertilidad", "Adaptógeno"],
+    "preparado": "Polvo: 1-3 gramos al día, preferiblemente por la mañana",
+    "contraindicaciones": ["Hipertensión", "Problemas tiroideos"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3614574/",
+    "descripcion": "Raíz andina adaptógena, tradicionalmente usada para aumentar la energía y la vitalidad."
+  },
+  {
+    "id": "ashwagandha",
+    "nombreComun": "Ashwagandha",
+    "nombreCientifico": "Withania somnifera",
+    "usos": ["Estrés", "Ansiedad", "Energía", "Adaptógeno"],
+    "preparado": "Extracto: 300-600 mg al día, preferiblemente por la noche",
+    "contraindicaciones": ["Embarazo", "Lactancia", "Hipertiroidismo"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3252722/",
+    "descripcion": "Planta adaptógena india, conocida como 'ginseng indio' por sus propiedades energizantes y antiestrés."
+  },
+  {
+    "id": "rhodiola",
+    "nombreComun": "Rhodiola",
+    "nombreCientifico": "Rhodiola rosea",
+    "usos": ["Estrés", "Fatiga", "Adaptógeno", "Rendimiento mental"],
+    "preparado": "Extracto: 200-400 mg al día, preferiblemente por la mañana",
+    "contraindicaciones": ["Embarazo", "Lactancia", "Bipolaridad"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3659512/",
+    "descripcion": "Planta adaptógena ártica, tradicionalmente usada para combatir la fatiga y mejorar la resistencia al estrés."
+  },
+  {
+    "id": "milk-thistle",
+    "nombreComun": "Cardo Mariano",
+    "nombreCientifico": "Silybum marianum",
+    "usos": ["Hígado", "Protección hepática", "Digestión", "Antioxidante"],
+    "preparado": "Extracto: 150-300 mg de silimarina al día dividido en 2-3 dosis",
+    "contraindicaciones": ["Alergia a asteráceas"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3582329/",
+    "descripcion": "Planta con hojas manchadas de blanco, conocida por sus propiedades hepatoprotectoras y antioxidantes."
+  },
+  {
+    "id": "dandelion",
+    "nombreComun": "Diente de León",
+    "nombreCientifico": "Taraxacum officinale",
+    "usos": ["Digestión", "Hígado", "Diurético", "Antioxidante"],
+    "preparado": "Infusión: 1-2 cucharaditas de raíz por taza, hervir 10 minutos",
+    "contraindicaciones": ["Obstrucción biliar", "Gastritis", "Cálculos biliares"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5553762/",
+    "descripcion": "Planta herbácea común con flores amarillas, tradicionalmente usada como depurativo y digestivo."
+  },
+  {
+    "id": "chamomile",
+    "nombreComun": "Manzanilla",
+    "nombreCientifico": "Matricaria chamomilla",
+    "usos": ["Digestión", "Ansiedad", "Insomnio", "Inflamación"],
+    "preparado": "Infusión: 1-2 cucharaditas por taza, reposar 5-7 minutos",
+    "contraindicaciones": ["Alergia a asteráceas", "Embarazo avanzado"],
+    "fuente": "https://medlineplus.gov/spanish/druginfo/herb_All.html",
+    "descripcion": "Planta herbácea anual con flores blancas y centro amarillo, ampliamente utilizada en medicina tradicional."
+  },
+  {
+    "id": "elderberry",
+    "nombreComun": "Sauco",
+    "nombreCientifico": "Sambucus nigra",
+    "usos": ["Resfriados", "Gripe", "Sistema inmunológico", "Antioxidante"],
+    "preparado": "Jarabe: 1-2 cucharaditas al día durante resfriados",
+    "contraindicaciones": ["Embarazo", "Lactancia", "Enfermedades autoinmunes"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/4441164/",
+    "descripcion": "Arbusto con bayas negras, tradicionalmente usado para prevenir y tratar resfriados y gripes."
+  },
+  {
+    "id": "echinacea",
+    "nombreComun": "Equinácea",
+    "nombreCientifico": "Echinacea purpurea",
+    "usos": ["Sistema inmunológico", "Resfriados", "Infecciones respiratorias"],
+    "preparado": "Tintura: 2-4 ml tres veces al día durante máximo 8 semanas",
+    "contraindicaciones": ["Alergia a asteráceas", "Enfermedades autoinmunes"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4441164/",
+    "descripcion": "Planta herbácea con flores púrpuras, popular por sus propiedades inmunoestimulantes."
+  },
+  {
+    "id": "garlic",
+    "nombreComun": "Ajo",
+    "nombreCientifico": "Allium sativum",
+    "usos": ["Sistema inmunológico", "Cardiovascular", "Antibiótico natural", "Digestión"],
+    "preparado": "Crudo: 1-2 dientes al día, o extracto: 600-1200 mg",
+    "contraindicaciones": ["Medicamentos anticoagulantes", "Cirugía"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4103721/",
+    "descripcion": "Bulbo aromático, conocido por sus propiedades antibióticas naturales y beneficios cardiovasculares."
+  },
+  {
+    "id": "turmeric",
+    "nombreComun": "Cúrcuma",
+    "nombreCientifico": "Curcuma longa",
+    "usos": ["Inflamación", "Digestión", "Protección hepática", "Antioxidante"],
+    "preparado": "Polvo: 1-3 gramos al día con pimienta negra para mejorar absorción",
+    "contraindicaciones": ["Cálculos biliares", "Medicamentos anticoagulantes"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3633300/",
+    "descripcion": "Rizoma de color amarillo intenso, ingrediente principal del curry y reconocido por sus propiedades antiinflamatorias."
+  },
+  {
+    "id": "ginger",
+    "nombreComun": "Jengibre",
+    "nombreCientifico": "Zingiber officinale",
+    "usos": ["Náuseas", "Digestión", "Inflamación", "Resfriados"],
+    "preparado": "Té: 1-2 cm de raíz fresca por taza, hervir 10 minutos",
+    "contraindicaciones": ["Medicamentos anticoagulantes", "Cálculos biliares"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3665023/",
+    "descripcion": "Rizoma aromático y picante, ampliamente utilizado en gastronomía y medicina tradicional."
+  },
+  {
+    "id": "peppermint",
+    "nombreComun": "Menta",
+    "nombreCientifico": "Mentha piperita",
+    "usos": ["Digestión", "Náuseas", "Dolor de cabeza", "Congestión nasal"],
+    "preparado": "Infusión: 1 cucharadita por taza, reposar 3-5 minutos",
+    "contraindicaciones": ["Reflujo gastroesofágico", "Niños menores de 2 años"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6358922/",
+    "descripcion": "Hierba aromática perenne con hojas dentadas y aroma refrescante característico."
+  },
+  {
+    "id": "lavender",
+    "nombreComun": "Lavanda",
+    "nombreCientifico": "Lavandula angustifolia",
+    "usos": ["Ansiedad", "Insomnio", "Relajación", "Dolor de cabeza"],
+    "preparado": "Infusión: 1-2 cucharaditas por taza, reposar 5 minutos",
+    "contraindicaciones": ["Alergia a lavanda", "Uso excesivo puede causar somnolencia"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3612440/",
+    "descripcion": "Arbusto aromático con flores moradas, conocido por su efecto relajante y propiedades calmantes."
+  },
+  {
+    "id": "valerian",
+    "nombreComun": "Valeriana",
+    "nombreCientifico": "Valeriana officinalis",
+    "usos": ["Insomnio", "Ansiedad", "Nerviosismo", "Estrés"],
+    "preparado": "Tintura: 30-60 gotas antes de dormir, o infusión 1-2 gramos",
+    "contraindicaciones": ["Embarazo", "Lactancia", "Medicamentos sedantes"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4394901/",
+    "descripcion": "Planta perenne con raíz aromática, tradicionalmente usada como sedante natural suave."
+  },
+  {
+    "id": "st-johns-wort",
+    "nombreComun": "Hierba de San Juan",
+    "nombreCientifico": "Hypericum perforatum",
+    "usos": ["Depresión leve", "Ansiedad", "Cambios de humor", "Nerviosismo"],
+    "preparado": "Extracto: 300-600 mg al día dividido en 2-3 dosis",
+    "contraindicaciones": ["Medicamentos antidepresivos", "Embarazo", "Fotosensibilidad"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4394901/",
+    "descripcion": "Planta herbácea con flores amarillas, tradicionalmente usada para problemas de humor y nerviosismo."
+  },
+  {
+    "id": "black-cohosh",
+    "nombreComun": "Cohosh Negro",
+    "nombreCientifico": "Actaea racemosa",
+    "usos": ["Menopausia", "Sofocos", "Cambios de humor", "Dolores menstruales"],
+    "preparado": "Extracto: 40-80 mg al día dividido en 2 dosis",
+    "contraindicaciones": ["Embarazo", "Lactancia", "Problemas hepáticos"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4394901/",
+    "descripcion": "Planta herbácea con raíz negra, tradicionalmente usada para síntomas de menopausia y problemas hormonales."
+  },
+  {
+    "id": "red-clover",
+    "nombreComun": "Trébol Rojo",
+    "nombreCientifico": "Trifolium pratense",
+    "usos": ["Menopausia", "Sofocos", "Osteoporosis", "Salud cardiovascular"],
+    "preparado": "Infusión: 1-2 cucharaditas por taza, reposar 5-10 minutos",
+    "contraindicaciones": ["Embarazo", "Lactancia", "Medicamentos anticoagulantes"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4394901/",
+    "descripcion": "Planta herbácea con flores rosadas, tradicionalmente usada para síntomas de menopausia y salud ósea."
+  },
+  {
+    "id": "dong-quai",
+    "nombreComun": "Dong Quai",
+    "nombreCientifico": "Angelica sinensis",
+    "usos": ["Menopausia", "Dolores menstruales", "Circulación", "Salud femenina"],
+    "preparado": "Extracto: 200-400 mg al día dividido en 2-3 dosis",
+    "contraindicaciones": ["Embarazo", "Lactancia", "Medicamentos anticoagulantes"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4394901/",
+    "descripcion": "Raíz china tradicional, conocida como 'ginseng femenino' por sus beneficios para la salud de la mujer."
+  },
+  {
+    "id": "vitex",
+    "nombreComun": "Vitex",
+    "nombreCientifico": "Vitex agnus-castus",
+    "usos": ["Síndrome premenstrual", "Desequilibrios hormonales", "Fertilidad", "Acné hormonal"],
+    "preparado": "Extracto: 200-400 mg al día por la mañana",
+    "contraindicaciones": ["Embarazo", "Lactancia", "Medicamentos hormonales"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4394901/",
+    "descripcion": "Arbusto mediterráneo, tradicionalmente usado para equilibrar hormonas femeninas y problemas menstruales."
+  },
+  {
+    "id": "evening-primrose",
+    "nombreComun": "Onagra",
+    "nombreCientifico": "Oenothera biennis",
+    "usos": ["Síndrome premenstrual", "Piel seca", "Eczemas", "Artritis"],
+    "preparado": "Aceite: 500-1000 mg al día dividido en 2-3 dosis",
+    "contraindicaciones": ["Epilepsia", "Medicamentos anticoagulantes"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4394901/",
+    "descripcion": "Planta herbácea con flores amarillas, rica en ácidos grasos esenciales y tradicionalmente usada para problemas hormonales."
+  },
+  {
+    "id": "milk-thistle",
+    "nombreComun": "Cardo Mariano",
+    "nombreCientifico": "Silybum marianum",
+    "usos": ["Hígado", "Protección hepática", "Digestión", "Antioxidante"],
+    "preparado": "Extracto: 150-300 mg de silimarina al día dividido en 2-3 dosis",
+    "contraindicaciones": ["Alergia a asteráceas"],
+    "fuente": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3582329/",
+    "descripcion": "Planta con hojas manchadas de blanco, conocida por sus propiedades hepatoprotectoras y antioxidantes."
+  }
+]
