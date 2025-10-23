@@ -463,16 +463,32 @@ def get_analytics_stats():
         conn = get_db_connection()
         cursor = conn.cursor()
         
+        # Detectar tipo de base de datos
+        db_url = os.getenv('DATABASE_URL')
+        is_postgresql = db_url and db_url.startswith('postgresql')
+        
         # Estadísticas generales
-        cursor.execute('''
-            SELECT 
-                COUNT(*) as total_events,
-                COUNT(DISTINCT session_id) as unique_sessions,
-                COUNT(CASE WHEN event_type = 'page_view' THEN 1 END) as page_views,
-                COUNT(CASE WHEN event_type = 'click' THEN 1 END) as clicks,
-                COUNT(CASE WHEN timestamp >= CURRENT_DATE THEN 1 END) as events_today
-            FROM analytics
-        ''')
+        if is_postgresql:
+            cursor.execute('''
+                SELECT 
+                    COUNT(*) as total_events,
+                    COUNT(DISTINCT session_id) as unique_sessions,
+                    COUNT(CASE WHEN event_type = 'page_view' THEN 1 END) as page_views,
+                    COUNT(CASE WHEN event_type = 'click' THEN 1 END) as clicks,
+                    COUNT(CASE WHEN timestamp >= CURRENT_DATE THEN 1 END) as events_today
+                FROM analytics
+            ''')
+        else:
+            cursor.execute('''
+                SELECT 
+                    COUNT(*) as total_events,
+                    COUNT(DISTINCT session_id) as unique_sessions,
+                    COUNT(CASE WHEN event_type = 'page_view' THEN 1 END) as page_views,
+                    COUNT(CASE WHEN event_type = 'click' THEN 1 END) as clicks,
+                    COUNT(CASE WHEN DATE(timestamp) = DATE('now') THEN 1 END) as events_today
+                FROM analytics
+            ''')
+        
         general_stats = cursor.fetchone()
         
         # Páginas más visitadas
@@ -498,14 +514,24 @@ def get_analytics_stats():
         top_clicks = [{'id': row[0], 'text': row[1], 'clicks': row[2]} for row in cursor.fetchall()]
         
         # Estadísticas por día (últimos 7 días)
-        cursor.execute('''
-            SELECT DATE(timestamp) as date, COUNT(*) as events
-            FROM analytics 
-            WHERE timestamp >= CURRENT_DATE - INTERVAL '7 days'
-            GROUP BY DATE(timestamp)
-            ORDER BY date DESC
-        ''')
-        daily_stats = [{'date': row[0].isoformat(), 'events': row[1]} for row in cursor.fetchall()]
+        if is_postgresql:
+            cursor.execute('''
+                SELECT DATE(timestamp) as date, COUNT(*) as events
+                FROM analytics 
+                WHERE timestamp >= CURRENT_DATE - INTERVAL '7 days'
+                GROUP BY DATE(timestamp)
+                ORDER BY date DESC
+            ''')
+        else:
+            cursor.execute('''
+                SELECT DATE(timestamp) as date, COUNT(*) as events
+                FROM analytics 
+                WHERE timestamp >= DATE('now', '-7 days')
+                GROUP BY DATE(timestamp)
+                ORDER BY date DESC
+            ''')
+        
+        daily_stats = [{'date': row[0].isoformat() if hasattr(row[0], 'isoformat') else str(row[0]), 'events': row[1]} for row in cursor.fetchall()]
         
         conn.close()
         
